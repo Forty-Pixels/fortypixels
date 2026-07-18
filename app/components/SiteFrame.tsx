@@ -1,0 +1,220 @@
+"use client";
+
+import Link from "next/link";
+import {usePathname} from "next/navigation";
+import {createContext,useContext,useEffect,useRef,useState} from "react";
+import gsap from "gsap";
+import {ScrollTrigger} from "gsap/ScrollTrigger";
+import Lenis from "lenis";
+
+const pages=[
+ {href:"/",label:"Home"},{href:"/portfolio",label:"Portfolio"},{href:"/about",label:"About"},{href:"/services",label:"Services"}
+];
+export const CALENDLY_URL="https://calendly.com/imaadhifthikar123/30min";
+declare global{interface Window{Calendly?:{initPopupWidget:(opts:{url:string})=>void}}}
+const openCalendly=(e:React.MouseEvent)=>{e.preventDefault();window.Calendly?.initPopupWidget({url:CALENDLY_URL})};
+const NavContext=createContext<(href:string)=>void>(()=>{});
+export function TransitionLink({href,children,className=""}:{href:string;children:React.ReactNode;className?:string}){
+ const go=useContext(NavContext);return <a href={href} className={className} onClick={e=>{if(!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&e.button===0){e.preventDefault();go(href)}}}>{children}</a>
+}
+export function CalendlyLink({children,className=""}:{children:React.ReactNode;className?:string}){
+ return <a href={CALENDLY_URL} className={className} onClick={openCalendly}>{children}</a>
+}
+
+function Arrow(){return <span className="ui-arrow" aria-hidden><i /></span>}
+
+/* Choreographed offer-card demos: each card gets its own scripted loop. */
+function launchDemo(demo:HTMLElement){
+ const items=demo.querySelectorAll<HTMLElement>("[data-demo-item]");
+ const dot=demo.querySelector<HTMLElement>("[data-demo-pulse]");
+ const typeEl=demo.querySelector<HTMLElement>("[data-demo-type]");const screen=demo.querySelector<HTMLElement>(".launch-screen");
+ const btn=demo.querySelector<HTMLElement>(".demo-button");const cursor=demo.querySelector<HTMLElement>(".demo-cursor");const ripple=demo.querySelector<HTMLElement>(".demo-ripple");
+ if(!dot||!typeEl||!screen||!btn||!cursor||!ripple)return null;
+ const url=typeEl.dataset.demoType||"";typeEl.textContent="";
+ gsap.set(items,{autoAlpha:0,y:14});
+ const chars={n:0};
+ /* Page builds once and stays; the cursor-click action replays forever. */
+ const tl=gsap.timeline({paused:true})
+  .to(chars,{n:url.length,duration:.8,ease:"none",onUpdate:()=>{typeEl.textContent=url.slice(0,Math.round(chars.n))}},.2)
+  .to(items,{autoAlpha:1,y:0,duration:.6,stagger:.17,ease:"back.out(1.7)"},.55);
+ const act=gsap.timeline({repeat:-1,repeatDelay:.9})
+  .set(cursor,{x:()=>screen.offsetWidth-26,y:()=>screen.offsetHeight-16,scale:1},0)
+  .to(cursor,{autoAlpha:1,duration:.25},.05)
+  .to(cursor,{x:()=>btn.offsetLeft+btn.offsetWidth*.7,y:()=>btn.offsetTop+btn.offsetHeight*.55,duration:.75,ease:"power2.inOut"},.2)
+  .to(cursor,{scale:.78,duration:.12,yoyo:true,repeat:1,ease:"power2.in"},1.05)
+  .to(btn,{scale:.93,duration:.13,yoyo:true,repeat:1,ease:"power2.in",transformOrigin:"center center"},1.05)
+  .set(ripple,{scale:.4,autoAlpha:.9},1.15)
+  .to(ripple,{scale:2.3,autoAlpha:0,duration:.6,ease:"power2.out"},1.17)
+  .to(dot,{scale:1.6,duration:.28,yoyo:true,repeat:3,ease:"power1.inOut"},1.3)
+  .to(cursor,{autoAlpha:0,duration:.35},1.9)
+  .to({},{duration:1},2.4);
+ return tl.add(act,1.9)
+}
+function commerceDemo(demo:HTMLElement){
+ const product=demo.querySelector<HTMLElement>(".commerce-product");const add=demo.querySelector<HTMLElement>(".commerce-add");const fly=demo.querySelector<HTMLElement>(".commerce-fly");
+ const steps=gsap.utils.toArray<HTMLElement>(demo.querySelectorAll<HTMLElement>(".commerce-step"));
+ const dot=demo.querySelector<HTMLElement>("[data-demo-pulse]");
+ if(!product||!add||!fly||!dot||steps.length<3)return null;
+ const checks=steps.map(s=>s.querySelector<HTMLElement>("i")!);
+ gsap.set(product,{autoAlpha:0,y:12});gsap.set(steps,{autoAlpha:0,x:-12});gsap.set(checks,{scale:0});gsap.set(fly,{autoAlpha:0});
+ /* Product and steps build once and stay; the buying journey replays forever. */
+ const tl=gsap.timeline({paused:true})
+  .to(product,{autoAlpha:1,y:0,duration:.55,ease:"back.out(1.6)"},.2)
+  .to(steps,{autoAlpha:1,x:0,duration:.5,stagger:.12,ease:"power3.out"},.5);
+ const act=gsap.timeline({repeat:-1,repeatDelay:.8})
+  .to(add,{scale:1.35,duration:.16,yoyo:true,repeat:1,ease:"power2.out"},.1)
+  .set(fly,{x:()=>add.offsetLeft+add.offsetWidth/2-4,y:()=>add.offsetTop+add.offsetHeight/2-4,scale:1},.3)
+  .to(fly,{autoAlpha:1,duration:.1},.32)
+  .to(fly,{x:()=>steps[0].offsetLeft+steps[0].offsetWidth-26,y:()=>steps[0].offsetTop+steps[0].offsetHeight/2-4,scale:.55,duration:.5,ease:"power1.in"},.4)
+  .to(fly,{autoAlpha:0,duration:.12},.88);
+ [.95,1.5,2.05].forEach((t,i)=>{act.to(checks[i],{scale:1,duration:.5,ease:"back.out(3)"},t).to(steps[i],{scale:1.02,duration:.16,yoyo:true,repeat:1,ease:"power1.inOut"},t)});
+ return tl.add(act
+  .to(steps[2],{boxShadow:"0 0 0 9px rgba(104,66,206,.16)",duration:.4,yoyo:true,repeat:1,ease:"power1.inOut"},2.3)
+  .to(checks[2],{scale:1.3,duration:.22,yoyo:true,repeat:1,ease:"power1.inOut"},2.6)
+  .to(dot,{scale:1.6,duration:.28,yoyo:true,repeat:3,ease:"power1.inOut"},2.55)
+  .to({},{duration:.9},3.4)
+  .to(checks,{scale:0,duration:.3,ease:"power2.in"},4.3),1.15)
+}
+function systemsDemo(demo:HTMLElement){
+ const core=demo.querySelector<HTMLElement>(".system-core");const health=demo.querySelector<HTMLElement>(".system-health");
+ const rings=gsap.utils.toArray<HTMLElement>(demo.querySelectorAll<HTMLElement>(".system-ring"));
+ const lines=Array.from(demo.querySelectorAll<SVGLineElement>(".system-lines line"));
+ const nodes=gsap.utils.toArray<HTMLElement>(demo.querySelectorAll<HTMLElement>(".system-node"));
+ const tracks=gsap.utils.toArray<HTMLElement>(demo.querySelectorAll<HTMLElement>(".node-track"));
+ const packets=gsap.utils.toArray<HTMLElement>(demo.querySelectorAll<HTMLElement>(".system-packet"));
+ if(!core||!health||nodes.length<4||lines.length<4||packets.length<4||rings.length<2)return null;
+ const pos=[[16,15],[84,15],[16,85],[84,85]];
+ gsap.set(core,{scale:0,autoAlpha:0});gsap.set(nodes,{autoAlpha:0,scale:.7});gsap.set(health,{autoAlpha:0,y:10});
+ /* One-time build-in, then infinite ambient loops nested inside the master. */
+ const tl=gsap.timeline({paused:true})
+  .to(core,{scale:1,autoAlpha:1,duration:.5,ease:"back.out(2)"},.1)
+  .set(rings[0],{scale:.35,autoAlpha:.9},.3)
+  .to(rings[0],{scale:2.6,autoAlpha:0,duration:.9,ease:"power1.out"},.32)
+  .to(lines,{strokeDashoffset:0,duration:.5,stagger:.08,ease:"power2.out"},.35)
+  .to(nodes,{autoAlpha:1,scale:1,duration:.45,stagger:.08,ease:"back.out(1.8)"},.6)
+  .to(health,{autoAlpha:1,y:0,duration:.45,ease:"power3.out"},1.15);
+ const packetsTl=gsap.timeline({repeat:-1,repeatDelay:.5});
+ packets.forEach((p,i)=>{const t=i*.55;
+  packetsTl.set(p,{left:"50%",top:"50%"},t)
+   .to(p,{autoAlpha:1,duration:.12},t+.02)
+   .to(p,{left:`${pos[i][0]}%`,top:`${pos[i][1]}%`,duration:.55,ease:"power1.inOut"},t+.06)
+   .to(p,{autoAlpha:0,duration:.12},t+.52)
+   .to(nodes[i],{scale:1.08,duration:.16,yoyo:true,repeat:1,ease:"power1.inOut"},t+.52)});
+ const ringsTl=gsap.timeline({repeat:-1,repeatDelay:1.7})
+  .set(rings[1],{scale:.35,autoAlpha:.7},0)
+  .to(rings[1],{scale:2.4,autoAlpha:0,duration:1.1,ease:"power1.out"},.02)
+  .to(core,{scale:1.09,duration:.3,yoyo:true,repeat:1,ease:"power1.inOut"},0);
+ const labelsTl=gsap.timeline({repeat:-1});
+ [-26,-52,-78].forEach((y,i)=>labelsTl.to(tracks,{y,duration:.5,stagger:.06,ease:"power3.inOut"},1.6+i*2));
+ labelsTl.set(tracks,{y:0},6.5);
+ return tl.add(packetsTl,1.5).add(ringsTl,2.3).add(labelsTl,1.2)
+}
+function initOfferDemos(reduce:boolean){
+ gsap.utils.toArray<HTMLElement>(".offer-demo").forEach(demo=>{
+  if(reduce)return;
+  const kind=demo.dataset.demo;
+  const loop=kind==="launch"?launchDemo(demo):kind==="commerce"?commerceDemo(demo):kind==="systems"?systemsDemo(demo):null;
+  if(!loop)return;
+  ScrollTrigger.create({trigger:demo,start:"top 92%",end:"bottom 8%",onEnter:()=>loop.play(),onEnterBack:()=>loop.play(),onLeave:()=>loop.pause(),onLeaveBack:()=>loop.pause()})
+ })
+}
+
+const menuPages=[...pages,{href:"/contact",label:"Contact"}];
+const MENU_SHUT="ellipse(145% 0% at 50% -2%)",MENU_OPEN="ellipse(155% 138% at 50% -2%)",LS_WIDE=.6,LS_TIGHT=-.045;
+function Navigation(){
+ const pathname=usePathname();const [open,setOpen]=useState(false);const go=useContext(NavContext);
+ const overlay=useRef<HTMLDivElement>(null);const tlRef=useRef<gsap.core.Timeline|null>(null);const mounted=useRef(false);
+ /* Curved-edge sweep: the panel is an ellipse anchored above the viewport, so its
+    leading edge arcs as it grows. Links resolve by converging their letter-spacing. */
+ useEffect(()=>{
+  const el=overlay.current;if(!el)return;
+  const links=el.querySelectorAll<HTMLElement>(".nav-link-text");const fades=el.querySelectorAll<HTMLElement>("[data-nav-fade]");
+  if(!mounted.current){mounted.current=true;gsap.set(el,{clipPath:MENU_SHUT,visibility:"hidden"});return}
+  tlRef.current?.kill();
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches){
+   gsap.set(el,{clipPath:"none",visibility:open?"visible":"hidden"});
+   links.forEach(l=>{l.style.letterSpacing=`${LS_TIGHT}em`});
+   gsap.set([...links,...fades],{opacity:open?1:0,y:0});return
+  }
+  /* letter-spacing is driven off a proxy: GSAP mis-parses em units on this property. */
+  const spread=(tl:gsap.core.Timeline,from:number,to:number,dur:number,ease:string,at:(i:number)=>number)=>
+   links.forEach((l,i)=>{const o={v:from};tl.to(o,{v:to,duration:dur,ease,onUpdate:()=>{l.style.letterSpacing=`${o.v.toFixed(4)}em`}},at(i))});
+  if(open){
+   links.forEach(l=>{l.style.letterSpacing=`${LS_WIDE}em`});
+   const tl=gsap.timeline()
+    .set(el,{visibility:"visible"})
+    .fromTo(el,{clipPath:MENU_SHUT},{clipPath:MENU_OPEN,duration:.85,ease:"power3.inOut"})
+    .fromTo(links,{opacity:.12},{opacity:1,duration:.8,stagger:.07,ease:"power3.out"},.4)
+    .fromTo(fades,{y:14,opacity:0},{y:0,opacity:1,duration:.5,stagger:.05,ease:"power2.out"},.5);
+   spread(tl,LS_WIDE,LS_TIGHT,.8,"power3.out",i=>.4+i*.07);
+   tlRef.current=tl
+  }else{
+   const n=links.length,tl=gsap.timeline()
+    .to(fades,{opacity:0,duration:.25,ease:"power2.in"},0)
+    .to(links,{opacity:0,duration:.4,stagger:{each:.045,from:"end"},ease:"power2.in"},0);
+   spread(tl,LS_TIGHT,LS_WIDE,.4,"power2.in",i=>(n-1-i)*.045);
+   tl.to(el,{clipPath:MENU_SHUT,duration:.7,ease:"power3.inOut"},.35).set(el,{visibility:"hidden"});
+   tlRef.current=tl
+  }
+ },[open]);
+ useEffect(()=>{const k=(e:KeyboardEvent)=>{if(e.key==="Escape")setOpen(false)};window.addEventListener("keydown",k);return()=>window.removeEventListener("keydown",k)},[]);
+ return <header className={`site-nav ${open?"menu-is-open":""}`} data-theme="hero">
+  <div className="nav-blur">{[1,2,3,4,5].map(i=><i key={i}/>)}</div>
+  <div className="nav-overlay" ref={overlay} aria-hidden={!open}>
+   <div className="nav-overlay-inner">
+    <div className="nav-overlay-aside">
+     <span className="nav-aside-label" data-nav-fade>Get in touch</span>
+     <a href="mailto:hello@fortypixels.com" className="nav-aside-mail" data-nav-fade>hello@fortypixels.com</a>
+     <a href={CALENDLY_URL} className="nav-aside-book" data-nav-fade onClick={e=>{setOpen(false);openCalendly(e)}}>Book a discovery call <Arrow/></a>
+     <span className="nav-aside-loc" data-nav-fade>Colombo, Sri Lanka<b>© 2026 Forty Pixels</b></span>
+    </div>
+    <nav className="nav-overlay-links" aria-label="Primary navigation">
+     {menuPages.map((p,i)=><a key={p.href} href={p.href} className={pathname===p.href||pathname.startsWith(`${p.href}/`)?"active":""} onClick={e=>{e.preventDefault();go(p.href)}}><span className="nav-link-text">{p.label}</span><em data-nav-fade>0{i+1}</em></a>)}
+    </nav>
+   </div>
+  </div>
+  <div className="nav-bar">
+   <Link href="/" className="nav-logo" onClick={e=>{e.preventDefault();go("/")}} aria-label="Forty Pixels home"><span className="nav-logo-mark"><img src="/brand/logo.png" alt="Forty Pixels"/><img className="nav-logo-contrast" src="/brand/logo.png" alt="" aria-hidden="true"/></span></Link>
+   <a href="/contact" className={`nav-contact ${pathname==="/contact"?"active":""}`} onClick={e=>{e.preventDefault();go("/contact")}}>Get in touch <Arrow/></a>
+   <button className="nav-toggle" onClick={()=>setOpen(v=>!v)} aria-expanded={open} aria-label={open?"Close menu":"Open menu"}><span className="nav-toggle-icon" aria-hidden="true"><i/><i/></span></button>
+  </div>
+ </header>
+}
+
+function Footer(){
+ const pathname=usePathname();
+ return <footer className={`sstr-footer${pathname==="/contact"?" footer-pad-top":""}`} data-nav-theme="dark">
+  <div className="footer-shell">
+   <div className="footer-main">
+    <div className="footer-identity"><Link href="/" className="footer-mark"><span>FORTY</span><span>PIXELS<span className="lime-dot">.</span></span></Link><div className="footer-location"><span>COLOMBO, SRI LANKA</span><span>© 2026 FORTY PIXELS</span></div></div>
+    <div className="footer-directory">
+     <div><span className="footer-label">Pages</span><div className="footer-list"><TransitionLink href="/about">About</TransitionLink><TransitionLink href="/portfolio">Portfolio</TransitionLink><TransitionLink href="/services">Services</TransitionLink><TransitionLink href="/contact">Contact</TransitionLink></div></div><div><span className="footer-label">Start a project</span><a href="mailto:hello@fortypixels.com" className="footer-email">hello@fortypixels.com <Arrow/></a><CalendlyLink className="footer-book">Book a discovery call <Arrow/></CalendlyLink><form className="footer-subscribe" action="mailto:hello@fortypixels.com" method="post" encType="text/plain"><div><input id="footer-email" type="email" name="newsletter" required placeholder="Your email"/><button className="footer-subscribe-btn" type="submit"><span>Sign up</span><span className="ui-arrow" aria-hidden><i /></span></button></div></form></div>
+
+
+     <div className="footer-socials"><span className="footer-label">Follow</span><div><a href="https://www.instagram.com/fortypixelshq?igsh=a3IxdTFhNG51M3lo" target="_blank" rel="noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" strokeWidth="1.8"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" strokeWidth="1.8"/><circle cx="17.5" cy="6.5" r="1.1"/></svg></a><a href="https://www.facebook.com/share/1ES17DmX73/?mibextid=wwXIfr" target="_blank" rel="noreferrer" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-8h2.75l.5-3H13.5V9.05c0-.87.29-1.55 1.6-1.55h1.78V4.82c-.31-.04-1.37-.14-2.6-.14-2.57 0-4.33 1.57-4.33 4.45V11H7.1v3h2.85v8h3.55Z"/></svg></a><a href="https://www.tiktok.com/@fortypixels?_r=1&_t=ZS-987GVE4x7R7" target="_blank" rel="noreferrer" aria-label="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 3.5c.6 2.2 2 3.7 4.5 4v3.2c-1.9-.1-3.4-.7-4.5-1.5v6.9a5.9 5.9 0 1 1-5.1-5.85v3.3a2.7 2.7 0 1 0 1.9 2.55V3.5h3.2Z"/></svg></a></div></div>
+    </div>
+   </div>
+
+  </div>
+ </footer>
+}
+
+export function SiteFrame({children}:{children:React.ReactNode}){
+ const pathname=usePathname();const curtain=useRef<HTMLDivElement>(null);const [target,setTarget]=useState("");
+ const go=(href:string)=>{if(href===pathname)return;const name=href==="/"?"Home":href.split("/").filter(Boolean).pop()?.replaceAll("-"," ")||"Next";setTarget(name);const label=curtain.current?.querySelector("strong");if(label)label.textContent=name;gsap.timeline().set(curtain.current,{yPercent:100,display:"grid"}).to(curtain.current,{yPercent:0,duration:.75,ease:"power4.inOut"}).add(()=>window.location.assign(href))};
+ useEffect(()=>{const restoreFromHistory=(event:PageTransitionEvent)=>{if(!event.persisted)return;document.querySelector(".global-preloader")?.remove();if(curtain.current){curtain.current.style.display="none";curtain.current.style.transform="translateY(-100%)"}if(typeof lenis!=="undefined")lenis.start();};window.addEventListener("pageshow",restoreFromHistory);gsap.registerPlugin(ScrollTrigger);const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;const lenis=new Lenis({lerp:.1,smoothWheel:!reduce});lenis.on("scroll",ScrollTrigger.update);const tick=(t:number)=>lenis.raf(t*1000);gsap.ticker.add(tick);gsap.ticker.lagSmoothing(0);window.scrollTo(0,0);
+  const ctx=gsap.context(()=>{
+   const pre=document.querySelector<HTMLElement>(".global-preloader");if(pre&&sessionStorage.getItem("fp-preloader")!=="1"&&!reduce){lenis.stop();sessionStorage.setItem("fp-preloader","1");const n={v:0};gsap.timeline().to(n,{v:100,duration:2.8,ease:"power2.inOut",onUpdate:()=>{const el=pre.querySelector("strong");if(el)el.textContent=`${Math.round(n.v)}%`;pre.style.setProperty("--load",`${n.v}%`)}}).to(pre,{yPercent:-100,duration:1.2,ease:"power4.inOut"}).add(()=>{lenis.start();pre.remove()})}else pre?.remove();
+   gsap.set(curtain.current,{yPercent:0,display:"grid"});gsap.to(curtain.current,{yPercent:-100,duration:.85,ease:"power4.inOut",delay:.05,onComplete:()=>{if(curtain.current)curtain.current.style.display="none"}});
+   gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((el,i)=>gsap.fromTo(el,{y:65,autoAlpha:0},{y:0,autoAlpha:1,duration:1,delay:(i%3)*.04,ease:"power3.out",scrollTrigger:{trigger:el,start:"top 90%",toggleActions:"play none none reverse"}}));
+   gsap.utils.toArray<HTMLElement>("[data-words]").forEach(el=>{const words=el.querySelectorAll(".word");gsap.fromTo(words,{yPercent:110},{yPercent:0,duration:1.1,stagger:.035,ease:"power4.out",scrollTrigger:{trigger:el,start:"top 88%",toggleActions:"play none none reverse"}})});
+   gsap.utils.toArray<HTMLElement>("[data-fill]").forEach(el=>gsap.fromTo(el.querySelectorAll("span"),{opacity:.16},{opacity:1,stagger:.06,ease:"none",scrollTrigger:{trigger:el,start:"top 80%",end:"bottom 55%",scrub:true}}));
+   gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach(el=>gsap.fromTo(el,{yPercent:14},{yPercent:-14,ease:"none",scrollTrigger:{trigger:el.parentElement,start:"top bottom",end:"bottom top",scrub:true}}));
+   gsap.utils.toArray<HTMLElement>("[data-count]").forEach(el=>{const end=Number(el.dataset.count||0);if(reduce){el.textContent=String(end);return}const counter={value:0};gsap.to(counter,{value:end,duration:1.5,ease:"power2.out",scrollTrigger:{trigger:el.closest(".number-grid")||el,start:"top 82%",once:true},onUpdate:()=>{el.textContent=String(Math.round(counter.value))}})});
+   initOfferDemos(reduce);
+   document.querySelectorAll<HTMLElement>("[data-nav-theme]").forEach(section=>ScrollTrigger.create({trigger:section,start:"top 10%",end:"bottom 10%",onEnter:()=>document.querySelector(".site-nav")?.setAttribute("data-theme",section.dataset.navTheme||"light"),onEnterBack:()=>document.querySelector(".site-nav")?.setAttribute("data-theme",section.dataset.navTheme||"light")}));
+  });
+  return()=>{window.removeEventListener("pageshow",restoreFromHistory);ctx.revert();ScrollTrigger.getAll().forEach(t=>t.kill());gsap.ticker.remove(tick);lenis.destroy()}
+ },[pathname]);
+ return <NavContext.Provider value={go}><div className="global-preloader"><span>{"// FORTY PIXELS — LOADING"}</span><strong>0%</strong><i/></div><div ref={curtain} className="route-curtain"><strong>{target}</strong></div><Navigation/><div className="page-wrap">{children}</div><Footer/></NavContext.Provider>
+}

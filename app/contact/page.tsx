@@ -1,24 +1,7 @@
-import React from 'react';
-import Header from '@/components/sections/Header';
-import Footer from '@/components/sections/Footer';
-import Contact from '@/components/sections/Contact';
-
-import { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: "Get in Touch - Book a Free Discovery Call",
-  description: "Contact Forty Pixels today. Book a free discovery call or email us to start building your premium startup website. We respond within 24 hours.",
-  alternates: {
-    canonical: "https://fortypixels.com/contact"
-  }
-};
-
-export default function ContactPage() {
-  return (
-    <main className="min-h-screen bg-white">
-      <Header />
-      <Contact />
-      <Footer />
-    </main>
-  );
-}
+import type {Metadata} from "next";
+import {Arrow,CalendlyLink,Eyebrow,VideoHero,Words} from "../components/Sections";
+import {ContactForm} from "./ContactForm";
+export const metadata:Metadata={title:"Contact",description:"Tell Forty Pixels what you are building and get a clear next step."};
+export default function Contact(){return <main><VideoHero video="/videos/landing-hero-video.mp4" kicker="START A PROJECT" title="Tell us what needs to move forward." copy="Share the goal, the difficult part and what success should look like. We will respond with the clearest next step."/>
+<section className="contact-page section-pad" data-nav-theme="light"><Eyebrow index="01" label="Project enquiry"/><div className="contact-layout"><div><h2><Words>Start with the useful details.</Words></h2><p data-reveal>Replies usually arrive within one working day. Prefer a conversation? Book a discovery call or write directly.</p><div className="direct-links"><a href="mailto:hello@fortypixels.com">hello@fortypixels.com <Arrow/></a><CalendlyLink>Book a discovery call <Arrow/></CalendlyLink></div></div><ContactForm/></div></section>
+</main>}

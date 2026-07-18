@@ -1,38 +1,16 @@
-import React from 'react';
-import Header from '@/components/sections/Header';
-import Hero from '@/components/sections/Hero';
-import Services from '@/components/sections/Services';
-import Process from '@/components/sections/Process';
-import Testimonials from '@/components/sections/Testimonials';
-import Work from '@/components/sections/Work';
-import FAQ from '@/components/sections/FAQ';
-import Contact from '@/components/sections/Contact';
-import Footer from '@/components/sections/Footer';
-
-
-import { Metadata } from 'next';
-import { OrganizationSchema } from '@/components/seo/schema';
-
-export const metadata: Metadata = {
-  description: "Forty Pixels provides value-driven, premium web design for startups and founders. Get a stunning, responsive website without the agency markup.",
-  alternates: {
-    canonical: "https://fortypixels.com"
-  }
-};
-
-export default function Home() {
-  return (
-    <main className="min-h-screen bg-white">
-      <OrganizationSchema />
-      <Header />
-      <Hero />
-      <Services />
-      <Process />
-      <Testimonials />
-      <Work />
-      <FAQ />
-      <Contact />
-      <Footer />
-    </main>
-  );
-}
+import type {Metadata} from "next";
+import {Arrow,ContactBand,Eyebrow,ProjectCard,TransitionLink,Words} from "./components/Sections";
+import {OfferVisual,type OfferVisualKind} from "./components/OfferVisual";
+export const metadata:Metadata={title:"Digital experiences built to move business forward",description:"Forty Pixels combines strategy, design and engineering to build distinctive websites and digital products."};
+const fill="A focused partner for businesses that need sharper positioning, stronger experiences, and technology ready for the next stage of growth.".split(" ");
+const offers:[string,string,string,OfferVisualKind][]=[["Landing Pages","Focused, fast, built to validate.","One sharp page that turns a visitor into a customer. For launches, campaigns and single offers — live in about a week.","launch"],["Stores","A refined shop that makes buying simple.","Everything you need to sell online — easy for customers to buy from, easy for you to run. From a small collection to a serious catalog, yours to own.","commerce"],["Systems","Custom products, engineered for growth.","When the idea is bigger than a page or a store — websites, platforms, apps, portals and internal tools built around how your business actually works.","systems"]];
+export default function Home(){return <main>
+ <section className="home-hero" id="top" data-nav-theme="hero"><video className="brand-hero-video" autoPlay muted loop playsInline preload="auto"><source src="/videos/Video-7.mp4" type="video/mp4"/></video><div className="media-scrim"/><div className="hero-grid"/><div className="home-hero-copy"><h1><span className="hero-title-line"><Words>Digital design &amp;</Words></span><Words>development</Words><br/><Words>agency</Words></h1><p data-reveal>We help ambitious brands build websites, stores, and systems — design first, built to scale.</p><TransitionLink href="/portfolio" className="hero-cta"><span className="hero-cta-layer hero-cta-hover" aria-hidden="true"><span className="hero-cta-copy"><span>Our portfolio</span><Arrow/></span></span><span className="hero-cta-layer hero-cta-default"><span className="hero-cta-copy"><span>Our portfolio</span><Arrow/></span></span></TransitionLink></div></section>
+ <section className="editorial-intro section-pad" data-nav-theme="light"><Eyebrow index="01" label="A focused digital partner"/><div className="intro-layout"><h2 data-fill>{fill.map((w,i)=><span key={i}>{w} </span>)}</h2><div data-reveal><p>We work directly with founders and teams to turn business goals into digital systems people understand, trust, and use — websites, stores, and systems, built exactly as they were designed. No shortcuts, no simplifications along the way.</p><TransitionLink href="/about" className="line-link">About Forty Pixels <Arrow/></TransitionLink></div></div></section>
+ <section className="capability-feature section-pad" data-nav-theme="dark"><div className="capability-layout"><h2><Words>Built around how ambitious teams actually need to work.</Words></h2><div className="capability-reel" data-reveal><video autoPlay muted loop playsInline preload="metadata"><source src="/videos/forty.mp4" type="video/mp4"/></video></div></div></section>
+ <section className="numbers section-pad" data-nav-theme="light"><Eyebrow index="03" label="Why Forty Pixels"/><h2><Words>Small team. Direct thinking. Serious outcomes.</Words></h2><div className="number-grid"><article><strong aria-label="One-to-one"><span className="metric-value" data-count="1">0</span> <span>TO</span> <span className="metric-value" data-count="1">0</span></strong><p>Direct collaboration with the people doing the work.</p></article><article><strong aria-label="Four plus"><span className="metric-value" data-count="4">0</span><span>+</span></strong><p>Industries served across commerce, food, finance and software.</p></article><article><strong aria-label="One hundred percent"><span className="metric-value" data-count="100">0</span><span>%</span></strong><p>Custom responsive experiences, never recycled templates.</p></article></div></section>
+ <section className="offer-preview section-pad" data-nav-theme="lime"><Eyebrow index="04" label="Ways to work together"/><div className="offer-heading"><h2><Words>Choose the build that matches your next move.</Words></h2><TransitionLink href="/services" className="line-link">View all services <Arrow/></TransitionLink></div><div className="offer-grid">{offers.map(([name,tag,copy,kind],i)=><article key={name} data-reveal><span>0{i+1}</span><h3>{name}</h3><p className="offer-tag">{tag}</p><p>{copy}</p><OfferVisual kind={kind}/></article>)}</div></section>
+ <section className="selected-work section-pad" data-nav-theme="dark"><Eyebrow index="05" label="Selected portfolio" light/><div className="work-intro"><h2><Words>Built for the real world.</Words></h2><p data-reveal>Different industries. Different challenges. The same insistence on clarity, speed and usefulness.</p></div><div className="project-row"><ProjectCard slug="noora"/><ProjectCard slug="oyo-eats"/><ProjectCard slug="taanz"/></div><div className="work-cta-row"><TransitionLink href="/portfolio" className="line-link is-light">See the full portfolio <Arrow/></TransitionLink></div></section>
+ <section className="trust-strip section-pad" data-nav-theme="light"><Eyebrow index="06" label="Built with businesses we believe in"/><div className="logo-marquee"><div className="logo-track">{[0,1].map(group=><div className="logo-group" key={group} aria-hidden={group===1}>{["nuzi","oyo-eats","noora-modesty","taanz","forte-logo"].map(n=><span key={`${group}-${n}`}><img src={`/logos/${n}.png`} alt={group===0?n:""}/><b>×</b></span>)}</div>)}</div></div><blockquote data-reveal>“A clear process, thoughtful details and a digital result that finally feels like the business we are becoming.”</blockquote></section>
+ <ContactBand title="Bring us the complex part. We’ll make the next step clear."/>
+ </main>}
