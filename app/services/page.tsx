@@ -1,7 +1,7 @@
 import type {Metadata} from "next";
 import {Arrow,ContactBand,Eyebrow,ProcessVisual,TransitionLink,VideoHero,Words} from "../components/Sections";
 import {FaqAccordion} from "../components/FaqAccordion";
-export const metadata:Metadata={title:"Website services",description:"Clear website packages and a collaborative process built for startups and growing businesses."};
+export const metadata:Metadata={title:"Website services",description:"Clear website packages and a collaborative process built for startups and growing businesses.",alternates:{canonical:"/services"}};
 const packages=[
  {name:"Landing Pages",for:"Founders · Single offers",copy:"A focused one-page experience for launching quickly — message, design, and technical quality already in place.",items:["Discovery and positioning","Custom responsive design","Performance-first development","Analytics and launch support"]},
  {name:"Stores",for:"Product brands · Growing retailers",copy:"A refined commerce experience that's easy to browse, easy to buy from, and straightforward for your team to run — yours to own.",items:["Product and category UX","Secure checkout","Inventory workflow","Conversion optimisation"]},

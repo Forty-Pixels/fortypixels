@@ -1,6 +1,6 @@
 import type {Metadata} from "next";
 import {ContactBand,Eyebrow,VideoHero,Words} from "../components/Sections";
-export const metadata:Metadata={title:"About",description:"Forty Pixels is a focused design and development studio for founders and growing businesses."};
+export const metadata:Metadata={title:"About",description:"Forty Pixels is a focused design and development studio for founders and growing businesses.",alternates:{canonical:"/about"}};
 const values=[["Effortless clarity","Good design guides people without making them work for the answer."],["Speed with purpose","Moving quickly matters when every decision still supports the goal."],["Direct communication","The people in the conversation are the people doing the work."],["Every screen","Mobile, tablet and desktop are designed as one connected experience."],["Accessible quality","Premium work comes from focus and craft—not unnecessary layers."],["Long-term thinking","A website or product should be able to grow with the business behind it."]];
 const valueIcons=[
  <svg key="clarity" viewBox="0 0 64 64" aria-hidden="true"><path className="ico-line" d="M32 14c14 0 24 12 26 18-2 6-12 18-26 18S8 38 6 32c2-6 12-18 26-18Z"/><circle className="ico-line" cx="32" cy="32" r="9"/><circle className="ico-dot" cx="32" cy="32" r="3"/></svg>,

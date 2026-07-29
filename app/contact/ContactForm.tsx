@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {Arrow} from "../components/Sections";
+import {track} from "../lib/analytics";
 export function ContactForm(){
  const [status,setStatus]=useState<"idle"|"sending"|"sent"|"error">("idle");
  const submit=async(e:React.FormEvent<HTMLFormElement>)=>{
@@ -11,8 +12,9 @@ export function ContactForm(){
   try{
    const res=await fetch("https://api.web3forms.com/submit",{method:"POST",body:data});
    const json=await res.json();
-   if(json.success){setStatus("sent");form.reset()}else{setStatus("error")}
-  }catch{setStatus("error")}
+   if(json.success){setStatus("sent");track("generate_lead",{method:"contact_form",service:String(data.get("service")||"unspecified")});form.reset()}
+   else{setStatus("error");track("form_error",{method:"contact_form"})}
+  }catch{setStatus("error");track("form_error",{method:"contact_form"})}
  };
  return <form onSubmit={submit} className="project-form" data-reveal>
   <label><span>Your name *</span><input name="name" required placeholder="Jane Smith"/></label>

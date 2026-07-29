@@ -6,13 +6,14 @@ import {createContext,useContext,useEffect,useRef,useState} from "react";
 import gsap from "gsap";
 import {ScrollTrigger} from "gsap/ScrollTrigger";
 import Lenis from "lenis";
+import {track} from "../lib/analytics";
 
 const pages=[
  {href:"/",label:"Home"},{href:"/portfolio",label:"Portfolio"},{href:"/about",label:"About"},{href:"/services",label:"Services"}
 ];
 export const CALENDLY_URL="https://calendly.com/imaadhifthikar123/30min";
 declare global{interface Window{Calendly?:{initPopupWidget:(opts:{url:string})=>void}}}
-const openCalendly=(e:React.MouseEvent)=>{e.preventDefault();window.Calendly?.initPopupWidget({url:CALENDLY_URL})};
+const openCalendly=(e:React.MouseEvent)=>{e.preventDefault();track("schedule_click",{method:"calendly"});window.Calendly?.initPopupWidget({url:CALENDLY_URL})};
 const NavContext=createContext<(href:string)=>void>(()=>{});
 export function TransitionLink({href,children,className=""}:{href:string;children:React.ReactNode;className?:string}){
  const go=useContext(NavContext);return <a href={href} className={className} onClick={e=>{if(!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&e.button===0){e.preventDefault();go(href)}}}>{children}</a>
