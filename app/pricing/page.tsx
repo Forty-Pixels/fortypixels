@@ -4,8 +4,7 @@ import {PricingClient} from "./PricingClient";
 export const metadata:Metadata={
  title:"Pricing",
  description:"Fixed website, commerce, app and ongoing support packages from Forty Pixels.",
- robots:{index:false,follow:false}
+ alternates:{canonical:"/pricing"}
 };
 
-export default function PricingPage(){return <PricingClient/>}
-
+export default function PricingPage(){return <PricingClient currencies={["USD","EUR"]}/>}
